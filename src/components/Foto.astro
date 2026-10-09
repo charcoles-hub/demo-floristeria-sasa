@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  nombre: string;
+  alt: string;
+  prioridad?: boolean;
+  class?: string;
+}
+
+const fotos = import.meta.glob<{ default: ImageMetadata }>('../assets/fotos/*.jpg', { eager: true });
+const { nombre, alt, prioridad = false, class: clase } = Astro.props;
+const src = fotos[`../assets/fotos/${nombre}.jpg`]?.default;
+if (!src) throw new Error(`Foto no encontrada: ${nombre}`);
+---
+
+<Image
+  src={src}
+  alt={alt}
+  width={src.width}
+  height={src.height}
+  format="webp"
+  quality={92}
+  loading={prioridad ? 'eager' : 'lazy'}
+  fetchpriority={prioridad ? 'high' : undefined}
+  decoding="async"
+  class={clase}
+/>
